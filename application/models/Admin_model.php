@@ -1,191 +1,323 @@
 <?php
 if (!defined('BASEPATH')) {
-    exit('No direct script access allowed');
+	exit('No direct script access allowed');
 }
 
-class Admin_model extends CI_Model {
+class Owner_model extends CI_Model {
 
-    function __construct() {
+	function __construct() {
 
-        parent::__construct();
+		parent::__construct();
 
-    }
+	}
 
-
-    public function getRestraunt() {
-        $this->db->select('*');
-        $this->db->from('kitchen');
-        $query = $this->db->get();
-        return $query->result();
-
-    }
-
-    public function getNews()
-    {
-        $this->db->select('*');
-        $this->db->from('newsletter');
-        $query = $this->db->get();
-        return $query->result();
-    }
-
-    public function getOwner() {
-        $this->db->select('*');
-        $this->db->from('owner');
-        $query = $this->db->get();
-        return $query->result();
-
-    }
-    public function getOrder()
-    {
-        $this->db->select('*');
-        $this->db->from('orderfood');
-        $this->db->join('user','orderfood.user_id=user.user_id');
-        $this->db->join('kitchen','orderfood.kitchen_id=kitchen.kitchen_id');
-        $query = $this->db->get();
-        return $query->result();
-    }
-    
-    public function getOrderDetail()
-    {
-              $this->db->select('*');
-        $this->db->from('orderfood');
-        $this->db->join('user','orderfood.user_id=user.user_id');
-        $this->db->join('kitchen','orderfood.kitchen_id=kitchen.kitchen_id');
-        $query = $this->db->get();
-        return $query->row();
-    }
-    public function getUser()
-    {
-        $this->db->select('*');
-        $this->db->from('user');
-//        $this->db->join('reply','reply.q_id=question.q_id','left outer');
-//        $this->db->join('student','question.s_id=student.s_id');
-//        $this->db->join('teacher','question.t_id=teacher.t_id');
-        $query = $this->db->get();
-        return $query->result();
-    }
-    public function deleteQuestions($id)
-    {
-        $this->db->where('q_id',$id);
-        $this->db->delete('question');
-        $this->db->where('q_id',$id);
-        $this->db->delete('reply');
-
-    }
-    public function deleteNews($id)
-    {
-        $this->db->where('n_id',$id);
-        $this->db->delete('newsletter');
-
-
-    }
-
-    public function verify($id)
-    {
-        $this->db->where('t_id',$id);
-        $this->db->set('t_status',"active");
-        $this->db->update('teacher');
-
-    }
-    
-    public function updateOrderStatus($id,$data)
-    {
-        $this->db->where('order_id',$id);
-        
-        $this->db->update('orderfood',$data); 
-    }
-    
-    public function updateEmail($data)
-    {
-         $this->db->where('id',1);
-        
-        $this->db->update('email',$data);
-    }
-    public function getContactUs() {
-        $this->db->select('*');
-        $this->db->from('contactUs');
-        $query = $this->db->get();
-        return $query->result();
-
-    }
-    public function getemailText()
-    {
-          $this->db->select('*');
-        $this->db->from('email');
-        $query = $this->db->get();
-        return $query->row();
-    }
-    public function getcat()
-    {
-        $this->db->select('*');
-        $this->db->from('food_category');
-
-        $query = $this->db->get();
-        return $query->result();
-    }
-    public function getDegrees($id)
-    {
-        $this->db->select('*');
-        $this->db->from('degree');
-        $this->db->where('t_id',$id);
-        $query = $this->db->get();
-        return $query->result();
-    }
-    public function getMenuCount()
-    {
-        $query = $this->db->select('count(*) as total')
-            ->from('menu')
-           // ->where('t_status',"inactive")
-            ->get();
-        return $query->row();
-    }
-    public function getOwnerCount()
-    {
-        $query = $this->db->select('count(*) as total')
-            ->from('owner')
-            ->get();
-        return $query->row();
-    }
-    public function getUserCount()
-    {
-        $query = $this->db->select('count(*) as total')
-            ->from('user')
-            ->get();
-        return $query->row();
-    }
-    public function getRestrauntCount()
-    {
-        $query = $this->db->select('count(*) as total')
-            ->from('kitchen')
-            ->get();
-        return $query->row();
-    }
-    
-    	public function getkitchen(){
+	public function getmenu($id){
 		$query=$this->db->select('*')
-		->from('kitchen')
-		->join('owner','kitchen.owner_id=owner.owner_id')
+		->from('menu')
+		->join('kitchen','kitchen.kitchen_id=menu.kitchen_id')
+		->join('owner','owner.owner_id=kitchen.owner_id')
+		->join('food_category','food_category.food_cat_id=menu.food_cat_id')
+		->group_by('menu.menu_id')
+		->where('owner.owner_id',$id)
 		->get();
 		return $query->result();
 
 
 	}
-	
-	
-	public function newKitchen($data){
+public function getKitchenId($id)
+{
+    $query=$this->db->select('*')
+        ->from('kitchen')
+        ->where('owner_id',$id)
+        ->get();
+    return $query->row()->kitchen_id;
+}
+public function getemailText()
+{
+       $query=$this->db->select('*')
+        ->from('email')
+        
+        ->get();
+    return $query->row();
+}
+
+public function getemail($email)
+{
+  $query=$this->db->select('*')
+        ->from('user')
+        ->where('user_id',$email)
+        ->get();
+    return $query->row()->user_email;  
+}
+public function getMenuCount($id)
+{
+    $query = $this->db->select('count(*) as total')
+        ->from('menu')
+        ->where('kitchen_id',$id)
+        ->get();
+    return $query->row();
+}
+public function getMenuk($kid)
+{
+    $query=$this->db->select('*')
+        ->from('menu')
+
+        ->where('kitchen_id',$kid)
+
+        ->get();
+    return $query->result();
+}
+    public function getkitmenu($id){
+
+        $query=$this->db->select('menu_name')
+            ->from('menu')
+
+//            ->join('menu','orderfood.menu_id=menu.menu_id')
+            ->where('menu_id',$id)
+//			$this->db->where("FIND_IN_SET('".$_GET['category']."',main_cat)>0");
+
+            ->get();
+        return $query->row()->menu_name;
+    }
+    public function getRejectOrders($kid)
+	{
+        $query=$this->db->select('*')
+            ->from('orderfood')
+            ->join('user','user.user_id=orderfood.user_id')
+//        ->join('menu','orderfood.menu_id=menu.menu_id')
+//        ->join('menu_extras','orderfood.m_extra_id=menu_extras.m_extra_id')
+            ->where('orderfood.kitchen_id',$kid)
+            ->where('status',"reject")
+            ->get();
+        return $query->result();
+	}
+	public function getTakeawayOrders($kid)
+	{
+        $query=$this->db->select('*')
+            ->from('orderfood')
+            ->join('user','user.user_id=orderfood.user_id')
+//        ->join('menu','orderfood.menu_id=menu.menu_id')
+//        ->join('menu_extras','orderfood.m_extra_id=menu_extras.m_extra_id')
+            ->where('orderfood.kitchen_id',$kid)
+            ->where('status',"takeaway")
+            ->get();
+        return $query->result();
+	}
+    public function getCompletedOrders($kid)
+    {
+        $query=$this->db->select('*')
+            ->from('orderfood')
+            ->join('user','user.user_id=orderfood.user_id')
+//        ->join('menu','orderfood.menu_id=menu.menu_id')
+//        ->join('menu_extras','orderfood.m_extra_id=menu_extras.m_extra_id')
+            ->where('orderfood.kitchen_id',$kid)
+            ->where('status',"completed")
+            ->get();
+        return $query->result();
+    }
+    public function getUnCompletedOrders($kid)
+    {
+             $query=$this->db->select('*')
+            ->from('orderfood')
+            ->join('user','user.user_id=orderfood.user_id')
+//        ->join('menu','orderfood.menu_id=menu.menu_id')
+//        ->join('menu_extras','orderfood.m_extra_id=menu_extras.m_extra_id')
+            ->where('orderfood.kitchen_id',$kid)
+           
+           ->where("status = 'accept' OR status = 'new' OR status = 'takeaway' OR status = 'baked'")
+            
+            ->get();
+        return $query->result();  
+    }
+    public function getInProcessOrders($kid)
+	{
+        $query=$this->db->select('*')
+            ->from('orderfood')
+            ->join('user','user.user_id=orderfood.user_id')
+//        ->join('menu','orderfood.menu_id=menu.menu_id')
+//        ->join('menu_extras','orderfood.m_extra_id=menu_extras.m_extra_id')
+            ->where('orderfood.kitchen_id',$kid)
+            ->where('status',"baked")
+            ->get();
+        return $query->result();
+	}
+	 public function getbakingProcessOrders($kid)
+	{
+        $query=$this->db->select('*')
+            ->from('orderfood')
+            ->join('user','user.user_id=orderfood.user_id')
+//        ->join('menu','orderfood.menu_id=menu.menu_id')
+//        ->join('menu_extras','orderfood.m_extra_id=menu_extras.m_extra_id')
+            ->where('orderfood.kitchen_id',$kid)
+            ->where('status',"accept")
+            ->get();
+        return $query->result();
+	}
+    public function acceptOrder($id)
+	{
+        $this->db->where('order_id', $id);
+        $this->db->set('status', "accept");
+        $this->db->update('orderfood');
+	}
+	 public function bakedOrder($id)
+	{
+        $this->db->where('order_id', $id);
+        $this->db->set('status', "baked");
+        $this->db->update('orderfood');
+	}
+	public function getKitchenIdy($id)
+	{
+	     $query=$this->db->select('*')
+            ->from('orderfood')
+
+//            ->join('menu','orderfood.menu_id=menu.menu_id')
+            ->where('order_id',$id)
+//			$this->db->where("FIND_IN_SET('".$_GET['category']."',main_cat)>0");
+
+            ->get();
+        return $query->row()->k_id;   
+	}
+	public function deliveredOrder($id)
+	{
+        $this->db->where('order_id', $id);
+        $this->db->set('status', "completed");
+        $this->db->update('orderfood');
+	}
+	public function takeawayOrder($id)
+	{
+        $this->db->where('order_id', $id);
+        $this->db->set('status', "takeaway");
+        $this->db->update('orderfood');
+	}
+    public function rejectOrder($id,$reason)
+    {
+        $this->db->where('order_id', $id);
+        $this->db->set('status', "reject");
+        $this->db->set('reason', $reason);
+        $this->db->update('orderfood');
+    }
+    public function getkitmenuEx($id){
+
+        $query=$this->db->select('m_extra_name')
+            ->from('menu_extras')
+
+//            ->join('menu','orderfood.menu_id=menu.menu_id')
+            ->where('m_extra_id',$id)
+//			$this->db->where("FIND_IN_SET('".$_GET['category']."',main_cat)>0");
+
+            ->get();
+        return $query->row()->m_extra_name;
+    }
+public function getNewOrders($kid)
+{
+    $query=$this->db->select('*')
+        ->from('orderfood')
+        ->join('user','user.user_id=orderfood.user_id')
+       // ->join('payment','payment.order_id=order_food.order_id')
+       // ->join('menu_extras','order_details.m_extra_id=menu_extras.m_extra_id')
+        ->where('orderfood.kitchen_id',$kid)
+        ->where('p_status',"paid")
+        ->where('status',"new")
+        ->get();
+    return $query->result();
+}
+    public function getCategoryCount($id)
+    {
+        $query = $this->db->select('count(*) as total')
+            ->from('food_category')
+            ->where('kitchen_id',$id)
+            ->get();
+        return $query->row();
+    }public function getDeliveredOrdersCount($id)
+{
+    $query = $this->db->select('count(*) as total')
+        ->from('orderfood')
+        ->where('kitchen_id',$id)
+        ->where('status',"completed")
+        ->get();
+    return $query->row();
+}public function getUndeliveredOrdersCount($id)
+{
+    $query = $this->db->select('count(*) as total')
+        ->from('orderfood')
+        ->where('kitchen_id',$id)
+        ->where('status',"new")
+        ->get();
+    return $query->row();
+}
+
+	public function getkitchen($id){
+		$query=$this->db->select('*')
+		->from('kitchen')
+		->join('owner','owner.owner_id=kitchen.owner_id')
+		->where('kitchen.owner_id',$id)
+		->get();
+		return $query->result();
+
+
+	}
+
+	public function newMenu($data){
+	 $this->db->insert('menu',$data);
+    $insert_id = $this->db->insert_id();
+    return  $insert_id;
+}
+
+
+public function newKitchen($data){
 	 $this->db->insert('kitchen',$data);
     //$insert_id = $this->db->insert_id();
     //return  $insert_id;
-    }
-    
-    
-    public function getEditKitchen($kitchen_id){
+}
+
+
+public function getOwnerKitchen($id){
+	$query=$this->db->select('*')
+	->where('owner_id',$id)
+	->from('kitchen')
+	->get();
+	return $query->result();
+}
+
+
+public function getOwnerfoodcat($id){
+	$query=$this->db->select('*')
+	->where('kitchen_id',$id)
+	->from('food_category')
+	->get();
+	return $query->result();
+}
+
+
+
+public function addMenuGallery($data2)
+{
+    $this->db->insert('menu_gallery',$data2);
+}
+public function getEditMenu($menu_id){
+$query=$this->db->select('*')
+	->where('menu_id',$menu_id)
+	->from('menu')
+	->join('kitchen','kitchen.kitchen_id=menu.kitchen_id')
+	->join('food_category','food_category.food_cat_id=menu.food_cat_id')
+	->get();
+	return $query->row();
+}
+
+
+
+public function getEditKitchen($kitchen_id){
 $query=$this->db->select('*')
 	->where('kitchen_id',$kitchen_id)
 	->from('kitchen')
-	->join('owner','kitchen.owner_id=owner.owner_id')
 	->get();
 	return $query->row();
+}
+
+
+public function editMenu($data,$menu_id){
+$this->db->where('menu_id',$menu_id)
+->update('menu',$data);
 }
 
 
@@ -193,277 +325,92 @@ public function editKitchen($data,$kit_id){
 $this->db->where('kitchen_id',$kit_id)
 ->update('kitchen',$data);
 }
-	
+
+
+public function deleteMenu($menu_id){
+$this->db->where('menu_id',$menu_id)
+->delete('menu');
+}
+
 
 public function deleteKitchen($kitchen_id){
 $this->db->where('kitchen_id',$kitchen_id)
 ->delete('kitchen');
 }
-	
-	public function getTodayCompletedOrders($date)
-    {
-        $query=$this->db->select('*')
-            ->from('orderfood')
-            ->join('user','user.user_id=orderfood.user_id')
-            ->where('DATE(orderfood.datetime)',$date)
-            ->where('status',"completed")
-            ->get();
-        return $query->result();
 
-    }
-public function getDateCompletedOrders($from,$to)
-{
-    $query=$this->db->select('*')
-        ->from('orderfood')
-        ->join('user','user.user_id=orderfood.user_id')
-        ->where('DATE(orderfood.datetime)>=',$from)
-        ->where('DATE(orderfood.datetime)<=',$to)
-        ->where('status',"completed")
-        ->get();
-    return $query->result();
+
+public function deleteMenuImages($menu_id){
+$this->db->where('menu_id',$menu_id)
+->delete('menu_gallery');
+} 
+
+public function updateMenuGallery($data2,$menu_id){
+	$this->db->where('menu_id',$menu_id)
+->update('menu_gallery',$data2);
 }
 
-    public function getTodayRejectedOrders($date)
-    {
-        $query=$this->db->select('*')
-            ->from('orderfood')
-            ->join('user','user.user_id=orderfood.user_id')
-            ->where('DATE(orderfood.datetime)',$date)
-            ->where('status',"reject")
-            ->get();
-        return $query->result();
+public function getmenuImages($menu_id){
+$query=$this->db->select('*')
+	->where('menu_id',$menu_id)
+	->from('menu_gallery')
 
-    }
-    public function getDateRejectedOrders($from,$to)
-    {
-        $query=$this->db->select('*')
-            ->from('orderfood')
-            ->join('user','user.user_id=orderfood.user_id')
-            ->where('DATE(orderfood.datetime)>=',$from)
-            ->where('DATE(orderfood.datetime)<=',$to)
-            ->where('status',"reject")
-            ->get();
-        return $query->result();
-    }
-    public function getOrderCount($date)
-    {
-        $query=$this->db->select('count(*) as total')
-            ->from('orderfood')
-            ->where('DATE(orderfood.datetime)',$date)
-            ->get();
-        return $query->row();
-    }
+	->get();
+	return $query->result();
+}
 
-    public function getDateOrderCount($from,$to)
-    {
-        $query=$this->db->select('count(*) as total')
-            ->from('orderfood')
-            ->where('DATE(orderfood.datetime)>=',$from)
-            ->where('DATE(orderfood.datetime)<=',$to)
-            ->get();
-        return $query->row();
-    }
 
-    public function getRejectedCount($date)
+public function getInbox($id)
     {
-        $query=$this->db->select('count(*) as total')
-            ->from('orderfood')
-            ->where('DATE(orderfood.datetime)',$date)
-            ->where('status',"reject")
-            ->get();
-        return $query->row();
-    }
 
-    public function getDateRejectedCount($from,$to)
-    {
-        $query=$this->db->select('count(*) as total')
-            ->from('orderfood')
-            ->where('DATE(orderfood.datetime)>=',$from)
-            ->where('DATE(orderfood.datetime)<=',$to)
-            ->where('status',"reject")
-            ->get();
-        return $query->row();
-    }
-    public function getCompletedCount($date)
-    {
-        $query=$this->db->select('count(*) as total')
-            ->from('orderfood')
-            ->where('DATE(orderfood.datetime)',$date)
-            ->where('status',"completed")
-            ->get();
-        return $query->row();
-    }
-
-    public function getDateCompletedCount($from,$to)
-    {
-        $query=$this->db->select('count(*) as total')
-            ->from('orderfood')
-            ->where('DATE(orderfood.datetime)>=',$from)
-            ->where('DATE(orderfood.datetime)<=',$to)
-            ->where('status',"completed")
-            ->get();
-        return $query->row();
-    }
-
-    public function getSalesCount($date)
-    {
-        $query=$this->db->select('Sum(price) as total')
-            ->from('orderfood')
-            ->where('DATE(orderfood.datetime)',$date)
-            ->where('status',"completed")
-            ->get();
-        return $query->row();
-    }
-
-    public function getDateSalesCount($from,$to)
-    {
-        $query=$this->db->select('Sum(price) as total')
-            ->from('orderfood')
-            ->where('DATE(orderfood.datetime)>=',$from)
-            ->where('DATE(orderfood.datetime)<=',$to)
-            ->where('status',"completed")
-            ->get();
-        return $query->row();
-    }
-    public function insertNewTopping($new_topping)
-    {
-        $this->db->insert('menu_extras',$new_topping);
-    }
-    public function getTroppingDetalis()
-    {
-        $query = $this->db
-            ->select('*')
-            ->from('menu_extras')
-            ->join('menu','menu.menu_id = menu_extras.menu_id')
+        $query = $this->db->select('*')
+            ->from('chat')
+            ->join('user', 'chat.user_id = user.user_id')
+            ->join('kitchen','kitchen.kitchen_id=chat.kitchen_id')
+//            ->join('items', 'orders.item_id = items.item_id', 'inner')
+            ->where('chat.owner_id', $id)
+            ->group_by('chat.user_id')
+           
             ->get();
         return $query->result();
     }
-    public function getData($id)
-    {
-        $query = $this->db
-            ->select('*')
-            ->from('menu_extras')
-            ->where('m_extra_id',$id)
-            ->join('menu','menu.menu_id = menu_extras.menu_id')
-            ->get();
-        return $query->result();
-    }
-    public function updateToppingSuccess($t_id,$update)
-    {
-        $this->db->where('m_extra_id',$t_id)->update('menu_extras',$update);
-    }
-    public function deleteTopping($id)
-    {
-        $this->db->where('m_extra_id',$id)->delete('menu_extras');
-    }
-    public function kitchenid()
-    {
-        $query = $this->db
-            ->select('*')
-            ->from('kitchen')
-            ->get();
-        return $query->result();
-    }
-    public function getMenu()
-    {
-        $query = $this->db
-            ->select('*')
-            ->from('menu')
-            ->get();
-        return $query->result();
-    }
-    public function getKitchenId($menu_id)
-    {
-        $query = $this->db
-            ->select('*')
-            ->from('menu')
-            ->where('menu_id',$menu_id)
-            ->get();
-        if($query->num_rows() == 1){
 
-            return $query->row()->kitchen_id;
-        }
 
+
+    public function updateMsgStatus($data,$user_id,$id)
+    {
+
+        $this->db->where('owner_id', $id);
+        $this->db->where('user_id', $user_id);
+        $this->db->update('chat', $data);
     }
 
 
-    public function getFoodNames()
-    {
-        $query = $this->db
-            ->select('*')
-            ->from('food_category')
-            ->get();
 
-        return $query->result();
-    }
-    public function getFoodSubCatNames()
-    {
-        $query = $this->db
-            ->select('*')
-            ->from('food_subcat')
-            ->get();
+    public function getChat($id, $user_id,$kid) {
+        $query = $this->db->select('chat.*,kitchen.*,user.*')
+            ->from('chat')
+            ->join('kitchen','kitchen.kitchen_id='.$kid)
+            ->join('user', 'user.user_id=chat.user_id');
+            
 
-        return $query->result();
-    }
-    public function insertMenu($insert_menu)
-    {
-        $this->db->insert('menu',$insert_menu);
-    }
-    public function getAll()
-    {
-        $query = $this->db
-            ->select('*')
-            ->from('menu')
-            ->join('kitchen','kitchen.kitchen_id = menu.kitchen_id')
-            ->join('food_category','food_category.food_cat_id = menu.food_cat_id')
-            ->join('food_subcat','food_subcat.f_subcat_id = menu.f_subcat_id')
+            $where = "((chat.sender_id=$id AND chat.user_id = $user_id) OR (chat.sender_id=$user_id AND chat.owner_id=$id))";
+        $query = $this->db->where($where)
+            ->order_by('chat.send_date')
             ->get();
         return $query->result();
     }
-    public function update_data($id)
-    {
-        $query = $this->db
-            ->select('*')
-            ->from('menu')
-            ->where('menu_id',$id)
-            ->join('kitchen','kitchen.kitchen_id = menu.kitchen_id')
-            ->join('food_category','food_category.food_cat_id = menu.food_cat_id')
-            ->get();
-        return $query->result();
-    }
-    public function deleteCat($id)
-    {
-        $this->db->where('food_cat_id',$id)->delete('food_category');
-    }
-    public function updatSuccess($cat_id,$update_cat)
-    {
-        $this->db->where('food_cat_id',$cat_id)->update('food_category',$update_cat);
-    }
-    public function getFoodCategory()
-    {
-        $query = $this->db
-            ->select('*')
-            ->from('food_category')
-            ->join('kitchen','food_category.kitchen_id = kitchen.kitchen_id')
-            ->get();
-        return $query->result();
-    }
-    public function updateCat($id)
-    {
-        $query = $this->db
-            ->select('*')
-            ->from('food_category')
-            ->where('food_cat_id',$id)
-            ->get();
-        return $query->result();
-    }
-    public function insertFoodCat($insert_cat)
-    {
-        $insert = $this->db->insert('food_category',$insert_cat);
-        if($insert)
-        {
-            return TRUE;
-        }
-    }
+    
+    
+    	public function getorderdetail($orderid){
+	    $query=$this->db->select('*')
+		->from('order_details')
+		->join('menu','menu.menu_id=order_details.menu_id')
+        //->join('menu_extras','order_details.m_extra_id=menu_extras.m_extra_id')
+        ->where('order_details.order_id',$orderid)
+		->get();
+		return $query->result();
+	}
+
+
 }
 ?>
