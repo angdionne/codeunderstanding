@@ -26,12 +26,9 @@ class Cart extends CI_Controller {
 	}
 
 	public function add(){
-// if($this->session->userdata('user_id')!=""){
-	$extra_id=null ;
+$extra_id=null ;
  	$m_extra_id=$this->input->post('extra');
-// 	//print_r($m_extra_id);
-// 	//die();
- 	if(!empty($m_extra_id)){
+if(!empty($m_extra_id)){
  	foreach($m_extra_id as $meid){
  		$extra_id=$extra_id.$meid.',';
 		
@@ -41,27 +38,6 @@ class Cart extends CI_Controller {
  	$foodcat_id=$this->input->post('foodcatid');
  	  $this->session->set_userdata('foody',$this->input->post('foodcatid'));
 
-// 		$data=array(
-// 		'user_id'=>$this->session->userdata('user_id'),
-// 		'menu_id'=>$this->input->post('menuid'),
-// 		'menu_name'=>$this->input->post('menuname'),
-// 		'comment'=>$this->input->post('comment'),
-// 		'm_extra_id'=>$extra_id,
-// 		'price'=>$this->input->post('menuprice'),
-// 		'qty'=>$this->input->post('quantity'),
-// 		'menu_image'=>$this->input->post('menuImage'),
-// 		/*'ordertype'=>$this->input->post('ordertype'),
-// 		'address'=>$this->input->post('address'),
-// 		'datetime'=>$this->input->post('datetime'),
-// 		'phone'=>$this->input->post('phone'),
-// 		'description'=>$this->input->post('description'),*/
-// 		'kitchen_id'=>$this->input->post('kitchenid'),
-// 		'kitchen_name'=>$this->input->post('kitchenname')
-// 		);
-// 		$this->Cart_model->addcart($data);
-		
-//
-//
         $kitchen=$this->session->set_userdata('kitchen',$this->input->post('kitchenid'));
  	    $items=$this->session->userdata('items');
 		$items++;
@@ -80,29 +56,16 @@ class Cart extends CI_Controller {
 $this->cart->insert($data2);
 		
 		redirect('front/catfood/'.$foodcat_id.'/'.$kitchen_id);
-// 	}
-// 	else{
-// 		redirect('user/userLogin');
-// 	}
 	}
 
+//it will remove Cart by ID
 	public function minusCart($cartid){
-		$kitchen_id=$this->input->post('kitchenid');
+	$kitchen_id=$this->input->post('kitchenid');
 	$foodcat_id=$this->input->post('foodcatid');
-//		$this->Cart_model->minusCart($cartid);
-//		 $items=$this->session->userdata('items');
-//		$items--;
-//		$this->session->set_userdata('items',$items);
-
-			$this->cart->remove($cartid);
-
-
-		//redirect('front/checkout');
-		redirect('front/catfood/'.$foodcat_id.'/'.$kitchen_id);
-		//echo('me');
-
+    $this->cart->remove($cartid);
+    redirect('front/catfood/'.$foodcat_id.'/'.$kitchen_id);
 	}
-
+//it will place order
 	public function orderNow()
     {
 
@@ -143,11 +106,7 @@ $this->cart->insert($data2);
         }
 
 }
-        //$userid=$this->session->userdata('user_id');
-
-        //$data['cart']=$this->Cart_model->getcartData($userid);
-        //	print_r($data['cart']);
-        //die();
+    
         if ($this->input->post('payment') == "cash") {
             $menuid = null;
             $menu_name = null;
@@ -159,34 +118,28 @@ $this->cart->insert($data2);
 
             $qty = trim($qty, ',');
             $menuid = trim($menuid, ',');
-//echo $menuid;
             $extraid = trim($extraid, ',');
             $time = $this->input->post('timep');
             $da = date('Y-m-d');
             $datetime = $da . ' ' . $time;
             $order = array(
                 'user_id' => $this->session->userdata('user_id'),
-                //	'menu_id'=>$menuid,
                 'status' => 'new',
                 'p_status' => 'paid',
-                //	'm_extra_id'=>$extraid,
                 'price' => $this->input->post('price'),
-                //	'qty'=>$qty,
                 'payment' => $this->input->post('payment'),
-                //	'email'=>$this->input->post('email'),
-               'address' => $this->input->post('address'),
+                'address' => $this->input->post('address'),
                 'datetime' => $datetime,
-                	'phone'=>$this->input->post('phone'),
+                'phone'=>$this->input->post('phone'),
                 'description' => $this->input->post('description'),
                 'pick' => $this->input->post('pick'),
                 'kitchen_id' => $this->session->userdata('kitchen'),
-                //'kitchen_name'=>$kitchenname
-            );
+                );
 
             $insertid = $this->Cart_model->orderNow($order);
 
 
-            //	foreach($data['cart'] as $dcart){
+       
             foreach ($this->cart->contents() as $items):
                 $user_id = $this->session->userdata('user_id');
                 $menuid = $items['id'];
@@ -196,8 +149,6 @@ $this->cart->insert($data2);
                 $qty = $items['qty'];
 
                 $kitchenid = $this->session->userdata('kitchen');
-                //$kitchenname=$dcart->kitchen_name;
-
 
                 $orderdet = array(
                     'order_id' => $insertid,
@@ -208,9 +159,6 @@ $this->cart->insert($data2);
                 );
                 $this->Cart_model->orderDetail($orderdet);
             endforeach;
-//}
-            //$this->Cart_model->deleteCart($user_id);
-            //$value=0;
             $this->session->unset_userdata('kitchen');
             $this->session->unset_userdata('foody');
             $this->cart->destroy();
@@ -229,33 +177,26 @@ $this->cart->insert($data2);
 
 			$qty = trim($qty, ',');
             $menuid = trim($menuid, ',');
-//echo $menuid;
             $extraid = trim($extraid, ',');
             $time = $this->input->post('timep');
             $da = date('Y-m-d');
             $datetime = $da . ' ' . $time;
             $order = array(
                 'user_id' => $this->session->userdata('user_id'),
-                //	'menu_id'=>$menuid,
                 'status' => 'new',
-                //	'm_extra_id'=>$extraid,
                 'price' => $this->input->post('price'),
-                //	'qty'=>$qty,
                 'payment' => $this->input->post('payment'),
-                //	'email'=>$this->input->post('email'),
                'address' => $this->input->post('address'),
                 'datetime' => $datetime,
                 	'phone'=>$this->input->post('phone'),
                 'description' => $this->input->post('description'),
                 'pick' => $this->input->post('pick'),
                 'kitchen_id' => $this->session->userdata('kitchen'),
-                //'kitchen_name'=>$kitchenname
-            );
+               );
 
             $insertid = $this->Cart_model->orderNow($order);
 
 
-            //	foreach($data['cart'] as $dcart){
             foreach ($this->cart->contents() as $items):
                 $user_id = $this->session->userdata('user_id');
                 $menuid = $items['id'];
@@ -265,8 +206,7 @@ $this->cart->insert($data2);
                 $qty = $items['qty'];
 
                 $kitchenid = $this->session->userdata('kitchen');
-                //$kitchenname=$dcart->kitchen_name;
-
+           
 
                 $orderdet = array(
                     'order_id' => $insertid,
@@ -277,9 +217,6 @@ $this->cart->insert($data2);
                 );
                 $this->Cart_model->orderDetail($orderdet);
             endforeach;
-//}
-            //$this->Cart_model->deleteCart($user_id);
-            //$value=0;
             $this->session->unset_userdata('kitchen');
             $this->session->unset_userdata('foody');
             $this->cart->destroy();
@@ -287,9 +224,6 @@ $this->cart->insert($data2);
             $returnURL = base_url() . 'paypal/success'; //payment success url
             $cancelURL = base_url() . 'paypal/cancel'; //payment cancel url
             $notifyURL = base_url() . 'paypal/ipn'; //ipn url
-            //get particular product data
-
-            //$userID = 1; //current user id
             $logo = base_url() . 'assets/images/logo.png';
 
             $this->paypal_lib->add_field('return', $returnURL);
@@ -319,8 +253,6 @@ $this->cart->insert($data2);
                     'amount' => $this->input->post('price')
                 );
                 $this->stripegateway->checkout($data);
-           // print_r($data["message"]);
-          // die();
           $data['message']=$this->stripegateway->checkout($data);
           if($data['message']=="succeeded")
           {
@@ -334,34 +266,27 @@ $this->cart->insert($data2);
 
 			$qty = trim($qty, ',');
             $menuid = trim($menuid, ',');
-//echo $menuid;
             $extraid = trim($extraid, ',');
             $time = $this->input->post('timep');
             $da = date('Y-m-d');
             $datetime = $da . ' ' . $time;
             $order = array(
                 'user_id' => $this->session->userdata('user_id'),
-                //	'menu_id'=>$menuid,
                 'status' => 'new',
                  'p_status' => 'paid',
-                //	'm_extra_id'=>$extraid,
                 'price' => $this->input->post('price'),
-                //	'qty'=>$qty,
                 'payment' => $this->input->post('payment'),
-                //	'email'=>$this->input->post('email'),
                 'address' => $this->input->post('address'),
                 'datetime' => $datetime,
             	'phone'=>$this->input->post('phone'),
                 'description' => $this->input->post('description'),
                 'pick' => $this->input->post('pick'),
                 'kitchen_id' => $this->session->userdata('kitchen'),
-                //'kitchen_name'=>$kitchenname
             );
 
             $insertid = $this->Cart_model->orderNow($order);
 
 
-            //	foreach($data['cart'] as $dcart){
             foreach ($this->cart->contents() as $items):
                 $user_id = $this->session->userdata('user_id');
                 $menuid = $items['id'];
@@ -371,7 +296,6 @@ $this->cart->insert($data2);
                 $qty = $items['qty'];
 
                 $kitchenid = $this->session->userdata('kitchen');
-                //$kitchenname=$dcart->kitchen_name;
 
 
                 $orderdet = array(
@@ -383,9 +307,6 @@ $this->cart->insert($data2);
                 );
                 $this->Cart_model->orderDetail($orderdet);
             endforeach;
-//}
-            //$this->Cart_model->deleteCart($user_id);
-            //$value=0;
             $this->session->unset_userdata('kitchen');
             $this->session->unset_userdata('foody');
 
