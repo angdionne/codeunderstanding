@@ -20,7 +20,7 @@ class Admin extends CI_Controller {
             redirect('Login');
 
         } else {
-            //      redirect('dashboard/community');
+           
         }
         $this->load->model('Admin_model');
         $this->load->model('Login_model');
@@ -28,6 +28,7 @@ class Admin extends CI_Controller {
 
     }
 
+//it  will load all models
     public function index() {
         $data['countRestraunt'] = $this->Admin_model->getRestrauntCount();
         $data['countMenu'] = $this->Admin_model->getMenuCount();
@@ -37,6 +38,8 @@ class Admin extends CI_Controller {
 
         $this->load->view('admin/dashboard',$data);
     }
+
+    //it iwll get email text from db
     public function email($is_msg=null)
     {
         if ($is_msg != null) {
@@ -54,6 +57,9 @@ class Admin extends CI_Controller {
 		}
         
     }
+
+
+    //update email address by id
     public function updateEmail()
     {
         $data=array(
@@ -94,22 +100,25 @@ class Admin extends CI_Controller {
         $this->_display_records($output);
     }
     
+
+    //it will load admin kitchen page
     public function kitchen(){
         $data['kitchens']=$this->Admin_model->getkitchen();
     	$this->load->view('admin/admin_kitchen',$data);
     }
     
+    //load addkitchen page and mgetOwner model
     public function addKitchen(){
-    	//$id = $this->session->userdata('owner_id');
-        //$kid = $this->Owner_model->getKitchenId($id);
+ 
     	$data['owner']=$this->Admin_model->getOwner();
     	$this->load->view('admin/addKitchen',$data);
     }
     
+    //add new kitchen
     	public function newKitchen(){
 	    $uploads_dir = 'assets/uploads/images/';
         $id = $this->session->userdata('owner_id');
-        //$pic = $_FILES["file"]['name'];
+        
         if ($_FILES["file"]['name']=="")
         {
             $pic="sample.jpg";
@@ -172,18 +181,17 @@ $open_time=$this->input->post('opentime');
         redirect('admin/kitchen');
         }
         
-        
+        //it wil update kitchen by ID
          public function updateKitchen($kitchen_id){
     $data['kitchen']=$this->Admin_model->getEditKitchen($kitchen_id);
     $data['owner']=$this->Admin_model->getOwner();
     $this->load->view('admin/updatekitchen',$data);
     }
     
-    
+    //Edit kitchen by ud
      public function editKitchen(){
  $kitchen_id=$this->input->post('kitchenid');
-//$id = $this->session->userdata('owner_id');
-    	 $uploads_dir = 'assets/uploads/images/';
+$uploads_dir = 'assets/uploads/images/';
        
         $pic = $_FILES["file"]['name'];
         
@@ -192,7 +200,7 @@ $open_time=$this->input->post('opentime');
 
             $tmp_name = $_FILES["file"]['tmp_name'];
 
-            // $tmp_name = basename($_FILES["files"]["tmp_name"]);
+           
             move_uploaded_file($tmp_name, $pic2);
         $date=date('y-m-d');
         $pic=$pic;
@@ -228,7 +236,7 @@ $open_time=$this->input->post('opentime');
     		 redirect('admin/kitchen');
     }
     
-    
+    //Delete kitchen by id
       public function deleteKitchen($kitchen_id){
     	$this->Admin_model->deleteKitchen($kitchen_id);	
     	 redirect('admin/kitchen');
@@ -281,67 +289,7 @@ public function editOrder()
     $this->load->view('admin/showorder',$data); 
 }
 
-    /*public function menu()
-    {
-
-        $crud = new grocery_CRUD();
-
-        $crud->set_table('menu')
-            ->set_subject('Menus')
-            ->display_as('menu_name', 'Name')->display_as('kitchen_id', 'Kitchen')->display_as('owner_id', 'Owner')->display_as('menu_description', 'Description')->display_as('menu_price', 'Price')->display_as('food_cat_id', 'Category') ;
-
-        $data['kitchen'] = $this->Admin_model->getRestraunt();
-
-        $array = array();
-        foreach ($data['kitchen'] as $arr) {
-            $array[$arr->kitchen_id] = $arr->kitchen_name;
-
-        }
-        $crud->field_type('kitchen_id', 'dropdown', $array);
-
-
-        $data['cat'] = $this->Admin_model->getcat();
-
-        $array1 = array();
-        foreach ($data['cat'] as $arr) {
-            $array1[$arr->food_cat_id] = $arr->food_cat_name;
-
-        }
-        $crud->field_type('food_cat_id', 'dropdown', $array1);
-
-
-        // $crud->set_rules('Phone', 'Phone', 'numeric');
-        //$crud->set_rules('s_age', 'age', 'numeric');
-
-       // $crud->set_field_upload('kitchen_image', 'assets/uploads/files');
-        $output = $crud->render();
-        $output->table = 'Menu';
-        $this->_display_records($output);
-    }*/
-
-
-     /*public function food_cat(){
-         if($this->session->userdata('admin_id') == ""){
-        redirect ('login/admin');
-        }else{ 
-        
-        //$id=  $this->session->userdata('admin_id');
-            // $kid = $this->Owner_model->getKitchenId($id);
-        $crud = new grocery_CRUD();
-//        $crud->set_theme('datatables');
-       //$crud->where('kitchen_id',$kid);
-        $crud->set_table('food_category');
-         $crud->columns('food_cat_id','food_cat_name','food_cat_image','Description');
-             $crud->set_field_upload('food_cat_image', 'assets/uploads/files')->display_as('food_cat_image', 'Image')->display_as('food_cat_name', 'Name');
-             //$crud->field_type('quantity_unit','dropdown',
-//array('1' => 'Kilograms', '2' => 'Size','3' => 'Pieces' , '4' => 'Full / Half'));
-       // $crud->field_type('kitchen_id','hidden',$kid);
-                $output = $crud->render();
-                $output->table = 'Food Category';
-        $this->_display_records($output);
-    }
-}*/
-
+   
 public function newsletter()
 {
     $data['news']=$this->Admin_model->getNews();
