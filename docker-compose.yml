@@ -1,0 +1,23 @@
+version: '3.7'
+services:
+  app:
+    container_name: docker-foodapp
+    build: 
+      context: '.'
+      dockerfile: Dockerfile
+    links:
+      - db
+    depends_on: 
+      - db  
+    restart: always    
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/app
+      - ./admin-panel:/app/admin
+  db:
+    container_name: docker-foodapp-db
+    build: ./mariadb
+    restart: always  
+    environment: 
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
