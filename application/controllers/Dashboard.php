@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Angela J
- * Date: 11/17/2016
- * Time: 2:41 PM
- */
+
 if (!defined('BASEPATH')) {
 	exit('No direct script access allowed');
 }
@@ -24,7 +19,6 @@ class Dashboard extends CI_Controller {
 			redirect('Login');
 
 		} else {
-			//      redirect('dashboard/community');
 		}
 	}
 
@@ -44,6 +38,8 @@ class Dashboard extends CI_Controller {
         $data['undelivered'] = $this->Owner_model->getUndeliveredOrdersCount($kid);
 $this->load->view('owner/dashboard',$data);
 	}
+
+    //It will accept order by email and ID
 	public function accept($id,$userid)
     {
          $this->Owner_model->acceptOrder($id);
@@ -57,7 +53,6 @@ $this->load->view('owner/dashboard',$data);
 		$subject = 'Food';
 		$message = $data['email']->accept;
 
-		//configure email settings
 		$config['protocol'] = 'sendmail';
 		$config['smtp_host'] = 'smtp.aol.com'; //smtp host name
 		$config['smtp_port'] = '465'; //smtp port number
@@ -75,7 +70,6 @@ $this->load->view('owner/dashboard',$data);
 		$this->email->subject($subject);
 		$this->email->message($message);
 	  $this->email->send();
-        //die();
          redirect('dashboard');
     }
     public function baked($id,$userid){
@@ -114,6 +108,7 @@ $this->load->view('owner/dashboard',$data);
         redirect('dashboard');
     }
     
+    //for take away order by User id and order id
     public function takeaway($id,$userid)
     {
         $this->Owner_model->takeawayOrder($id);
@@ -237,6 +232,7 @@ $crud = new grocery_CRUD();
 		$this->_display_records($output);
 }
 	
+    //Update profile
 	public function profile($is_msg = null) {
 
 		if ($is_msg != null) {
@@ -255,13 +251,17 @@ $crud = new grocery_CRUD();
 		}
 	}
 
+//select and load menu
     public function menu(){
     	$id = $this->session->userdata('owner_id');
     	$data['menu']=$this->Owner_model->getmenu($id);
     	
     	
     	$this->load->view('owner/owner_menu',$data);
-    }
+  
+
+   }
+    //Delivered orders
 public function delivereds()
 {
      $id = $this->session->userdata('owner_id');
@@ -271,6 +271,8 @@ public function delivereds()
       
 $this->load->view('owner/delivered',$data);
 }
+
+//undelivered orders
 public function undelivereds()
 {
      $id = $this->session->userdata('owner_id');
@@ -289,13 +291,9 @@ $this->load->view('owner/undelivered',$data);
         $id=  $this->session->userdata('owner_id');
              $kid = $this->Owner_model->getKitchenId($id);
         $crud = new grocery_CRUD();
-//        $crud->set_theme('datatables');
-       //$crud->where('kitchen_id',$kid);
         $crud->set_table('food_category');
          $crud->columns('food_cat_id','food_cat_name','food_cat_image');
              $crud->set_field_upload('food_cat_image', 'assets/uploads/files')->display_as('food_cat_image', 'Image')->display_as('food_cat_name', 'Name');
-             //$crud->field_type('quantity_unit','dropdown',
-//array('1' => 'Kilograms', '2' => 'Size','3' => 'Pieces' , '4' => 'Full / Half'));
         $crud->field_type('kitchen_id','hidden',$kid);
                 $output = $crud->render();
                 $output->table = 'Food Category';
@@ -326,37 +324,6 @@ $this->load->view('owner/undelivered',$data);
         $this->_display_records($output);
     }
 }
-
-
-/*public function menu_extras()
-{
-
-
-
-        $id=  $this->session->userdata('owner_id');
-        $kid = $this->Owner_model->getKitchenId($id);
-        $crud = new grocery_CRUD();
-//        $crud->set_theme('datatables');
-        $crud->where('kitchen_id',$kid);
-        $crud->set_table('menu_extras');
-    $data['menu'] = $this->Owner_model->getMenuk($kid);
-
-    $array2 = array();
-    foreach ($data['menu'] as $arr) {
-        $array2[$arr->menu_id] = $arr->menu_name;
-
-    }
-    $crud->field_type('menu_id', 'dropdown', $array2);
-        $crud->columns('menu_id','m_extra_name','m_extra_price');
-        $crud->display_as('menu_id', 'Menu')->display_as('m_extra_name', 'Extra Topping')->display_as('m_extra_price', 'Price');
-        $crud->field_type('kitchen_id','hidden',$kid);
-        $output = $crud->render();
-        $output->table = 'Topings';
-        $this->_display_records($output);
-
-}*/
-     
-
 
 
      public function menu_extras()
@@ -623,27 +590,6 @@ redirect('dashboard/kitchen');
         }
 
 
-
-        
-/*
-            $data2 = array();
-            for ($i=0 ; $i< count($_FILES['input25']['name']); $i++)
-            {
-                $pi = $_FILES["input25"]['name'][$i];
-                $pi2 = $uploads_dir . time().$pi;
-                $tmp_name = $_FILES["input25"]['tmp_name'][$i];
-                move_uploaded_file($tmp_name, $pi2);
-                $pi= time().$pi;
-
-                $data2 = array
-                (
-                'menu_id' => $menu_id,
-                'menu_gallery' => $pi
-                );
-
-                $this->Owner_model->addMenuGallery($data2);
-            }
-*/
 redirect('dashboard/menu');
     }
 
@@ -713,9 +659,6 @@ redirect('dashboard/menu');
         );
         $this->Owner_model->updateMsgStatus($data, $user_id, $id);
         $data['chats'] = $this->Owner_model->getChat($id, $user_id,$kid);
-        //$data['kitchen']=array('kitchen_id'=>$kid);
-        //print_r($data['chats']);
-        //die();
         $this->load->view('owner/chatuser', $data);
     }
 
@@ -785,11 +728,7 @@ redirect('dashboard/menu');
         }
         $section.='</table>';
         
-       // print_r($query);
-       // die();
-      //  echo json_encode($query['orderdetail']);
-    
-        echo $section;
+       echo $section;
     }
 
 }
