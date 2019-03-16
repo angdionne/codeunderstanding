@@ -26,18 +26,10 @@ class Login extends CI_Controller {
     public function admin() {
         $this->load->view('admin/login_view');
     }
-//$username = $this->input->post("post_username");
-		//$password = $this->input->post("post_password");
+
 public function sign(){
 		$owner_email = $this->input->post('owner_email');
 		$owner_password = $this->input->post('owner_password');
-        //$num=$this->login_model->get_Owner($owner_email, $owner_password)
-		//$this->form_validation->set_rules("owner_email", "owner_email", "trim|required");
-		//$this->form_validation->set_rules("owner_password", "owner_password", "trim|required");
-
-
-			//if ($this->input->post('btn_login') == "Login") {
-
 				$usr_result = $this->Login_model->get_Owner($owner_email, $owner_password);
 
 				if ($usr_result > 0) {
@@ -48,15 +40,9 @@ public function sign(){
 
 					$this->session->set_userdata('owner_id', $ownerDetails[0]->owner_id);
 					$this->session->set_userdata('owner_name', $ownerDetails[0]->owner_name);
-                    //$kid = $this->Login_model->get_kitchenofowner($ownerDetails[0]->owner_id);
 					$this->input->post('owner_id');
-
-					//echo "Successfully logged in";
-					
- 
   redirect("dashboard");
 				} else {
-					//echo "Not in";
 					$this->session->set_flashdata('msg', 'Invalid Username Or Password');
 					redirect('Login/index');
 
@@ -69,13 +55,6 @@ public function sign(){
     public function signAdmin(){
         $owner_email = $this->input->post('admin_email');
         $owner_password = $this->input->post('admin_password');
-        //$num=$this->login_model->get_Owner($owner_email, $owner_password)
-        //$this->form_validation->set_rules("owner_email", "owner_email", "trim|required");
-        //$this->form_validation->set_rules("owner_password", "owner_password", "trim|required");
-
-
-        //if ($this->input->post('btn_login') == "Login") {
-
         $usr_result = $this->Login_model->get_Admin($owner_email, $owner_password);
 
         if ($usr_result > 0) {
@@ -86,15 +65,9 @@ public function sign(){
 
             $this->session->set_userdata('admin_id', $ownerDetails[0]->admin_id);
             $this->session->set_userdata('admin_name', $ownerDetails[0]->admin_name);
-
-            //$this->input->post('owner_id');
-
-            //echo "Successfully logged in";
-            
           
              redirect("admin");
         } else {
-            //echo "Not in";
             $this->session->set_flashdata('msg', 'Invalid Username Or Password');
             redirect('Login/admin');
 
