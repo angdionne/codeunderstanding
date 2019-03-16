@@ -85,12 +85,7 @@ public function previousOrders()
                                                                     <td>'.  $od->comment .'</td></tr>';
         }
         $section.='</table>';
-
-        // print_r($query);
-        // die();
-        //  echo json_encode($query['orderdetail']);
-
-        echo $section;
+ echo $section;
     }
 public function changePassword()
 {
@@ -300,14 +295,7 @@ public function reorder()
     public function ologin(){
         $user_email = $this->input->post('email');
 		$user_password = $this->input->post('pass');
-        //$num=$this->login_model->get_Owner($owner_email, $owner_password)
-		//$this->form_validation->set_rules("owner_email", "owner_email", "trim|required");
-		//$this->form_validation->set_rules("owner_password", "owner_password", "trim|required");
-
-
-			//if ($this->input->post('btn_login') == "Login") {
-
-				$usr_result = $this->User_model->get_User($user_email, $user_password);
+    $usr_result = $this->User_model->get_User($user_email, $user_password);
 
 				if ($usr_result > 0) {
 
@@ -351,14 +339,7 @@ public function reorder()
     		
     	$user_email = $this->input->post('email');
 		$user_password = $this->input->post('pass');
-        //$num=$this->login_model->get_Owner($owner_email, $owner_password)
-		//$this->form_validation->set_rules("owner_email", "owner_email", "trim|required");
-		//$this->form_validation->set_rules("owner_password", "owner_password", "trim|required");
-
-
-			//if ($this->input->post('btn_login') == "Login") {
-
-				$usr_result = $this->User_model->get_User($user_email, $user_password);
+    $usr_result = $this->User_model->get_User($user_email, $user_password);
 
 				if ($usr_result > 0) {
 
@@ -375,9 +356,6 @@ public function reorder()
 					
 					$this->session->set_userdata('items',$items);
 
-					//$this->input->post('user_id');
-
-					//echo "Successfully logged in";
 					
 }
     		
@@ -433,14 +411,7 @@ public function reorder()
 public function userSignIn(){
 		$user_email = $this->input->post('user_email');
 		$user_password = $this->input->post('user_pass');
-        //$num=$this->login_model->get_Owner($owner_email, $owner_password)
-		//$this->form_validation->set_rules("owner_email", "owner_email", "trim|required");
-		//$this->form_validation->set_rules("owner_password", "owner_password", "trim|required");
-
-
-			//if ($this->input->post('btn_login') == "Login") {
-
-				$usr_result = $this->User_model->get_User($user_email, $user_password);
+  $usr_result = $this->User_model->get_User($user_email, $user_password);
 
 				if ($usr_result > 0) {
 
@@ -461,9 +432,6 @@ public function userSignIn(){
 					
 					$this->session->set_userdata('items',$items);
 
-					//$this->input->post('user_id');
-
-					//echo "Successfully logged in";
 					
 
    redirect("user");
@@ -484,12 +452,7 @@ public function userSignIn(){
         $user_password = $this->input->post('pass');
         $food = $this->input->post('food');
         $kit= $this->input->post('kitchen');
-        //$num=$this->login_model->get_Owner($owner_email, $owner_password)
-        //$this->form_validation->set_rules("owner_email", "owner_email", "trim|required");
-        //$this->form_validation->set_rules("owner_password", "owner_password", "trim|required");
-
-
-        //if ($this->input->post('btn_login') == "Login") {
+       
 
         $usr_result = $this->User_model->get_User($user_email, $user_password);
 
@@ -512,9 +475,6 @@ public function userSignIn(){
 
             $this->session->set_userdata('items',$items);
 
-            //$this->input->post('user_id');
-
-            //echo "Successfully logged in";
 
 echo 0;
            // redirect("user");
@@ -598,9 +558,7 @@ public function updatePassword()
 		);
 		$this->User_model->updateMsgStatus($data, $owner_id, $id);
 		$data['chats'] = $this->User_model->getChat($id, $owner_id,$kid);
-		//$data['kitchen']=array('kitchen_id'=>$kid);
-		//print_r($data['chats']);
-		//die();
+	
 		$this->load->view('user/chatowner', $data);
 	}
 
