@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Angela J
- * Date: 11/17/2016
- * Time: 2:41 PM
- */
+
 if (!defined('BASEPATH')) {
 	exit('No direct script access allowed');
 }
@@ -29,204 +24,8 @@ class Dashboard extends CI_Controller {
 	}
 
 	public function index() {
-        $id = $this->session->userdata('owner_id');
-        $kid = $this->Owner_model->getKitchenId($id);
-        $data['menu'] = $this->Owner_model->getMenuCount($kid);
-        $data['neworders'] = $this->Owner_model->getNewOrders($kid);
-        $data['takeaway'] = $this->Owner_model->getTakeawayOrders($kid);
-        $data['inprocess'] = $this->Owner_model->getInProcessOrders($kid);
-        $data['bakingprocess'] = $this->Owner_model->getbakingProcessOrders($kid);
-        $data['rejectorders'] = $this->Owner_model->getRejectOrders($kid);
-        $data['completeorders'] = $this->Owner_model->getCompletedOrders($kid);
-        $data['inorders'] = $this->Owner_model->getNewOrders($kid);
-        $data['category'] = $this->Owner_model->getCategoryCount($kid);
-        $data['delivered'] = $this->Owner_model->getDeliveredOrdersCount($kid);
-        $data['undelivered'] = $this->Owner_model->getUndeliveredOrdersCount($kid);
-$this->load->view('owner/dashboard',$data);
+
 	}
-	public function accept($id,$userid)
-    {
-         $this->Owner_model->acceptOrder($id);
-             $email=$this->Owner_model->getemail($userid);
-        
-        
-        $this->load->library('email');
-		$from_email = 'angdionne@aol.com'; 
-		 $data['email'] = $this->Owner_model->getemailText();
-
-		$subject = 'Food';
-		$message = $data['email']->accept;
-
-		//configure email settings
-		$config['protocol'] = 'sendmail';
-		$config['smtp_host'] = 'smtp.aol.com'; //smtp host name
-		$config['smtp_port'] = '465'; //smtp port number
-		$config['smtp_user'] = 'angdionne@aol.com';
-		$config['smtp_pass'] = 'Dionne30#!!'; //$from_email password
-		$config['mailtype'] = 'html';
-		$config['charset'] = 'utf-8';
-		$config['wordwrap'] = TRUE;
-		$config['newline'] = "\r\n"; //use double quotes
-		$this->email->initialize($config);
-
-		//send mail
-		$this->email->from($from_email, 'Food');
-		$this->email->to($email);
-		$this->email->subject($subject);
-		$this->email->message($message);
-	  $this->email->send();
-        //die();
-         redirect('dashboard');
-    }
-    public function baked($id,$userid){
-         $this->Owner_model->bakedOrder($id);
-           $email=$this->Owner_model->getemail($userid);
-        
-        
-        $this->load->library('email');
-		$from_email = 'angdionne@aol.com';
-		
- $data['email'] = $this->Owner_model->getemailText();
-		$subject = 'Food';
-		$message = $data['email']->bake;
-
-		//configure email settings
-		$config['protocol'] = 'sendmail';
-		$config['smtp_host'] = 'smtp.aol.com'; //smtp host name
-		$config['smtp_port'] = '465'; //smtp port number
-		$config['smtp_user'] = 'angdionne@aol.com.com';
-		$config['smtp_pass'] = 'Dionne30#!!'; //$from_email password
-		$config['mailtype'] = 'html';
-		$config['charset'] = 'utf-8';
-		$config['wordwrap'] = TRUE;
-		$config['newline'] = "\r\n"; //use double quotes
-		$this->email->initialize($config);
-
-		//send mail
-		$this->email->from($from_email, 'Food');
-		$this->email->to($email);
-		$this->email->subject($subject);
-		$this->email->message($message);
-		 $this->email->send();
-        
-        
-        
-        redirect('dashboard');
-    }
-    
-    public function takeaway($id,$userid)
-    {
-        $this->Owner_model->takeawayOrder($id);
-        $email=$this->Owner_model->getemail($userid);
-        
-        
-        $this->load->library('email');
-		$from_email = 'angdionne@aol.com'; 
-		
-$data['email'] = $this->Owner_model->getemailText();
-		$subject = 'Food';
-		$message = $data['email']->take;
-
-		//configure email settings
-		$config['protocol'] = 'sendmail';
-		$config['smtp_host'] = 'smtp.aol.com'; //smtp host name
-		$config['smtp_port'] = '465'; //smtp port number
-		$config['smtp_user'] = 'angdionne@aol.com';
-		$config['smtp_pass'] = 'Dionne30!!'; //$from_email password
-		$config['mailtype'] = 'html';
-		$config['charset'] = 'utf-8';
-		$config['wordwrap'] = TRUE;
-		$config['newline'] = "\r\n"; //use double quotes
-		$this->email->initialize($config);
-
-		//send mail
-		$this->email->from($from_email, 'Food');
-		$this->email->to($email);
-		$this->email->subject($subject);
-		$this->email->message($message);
-		 $this->email->send();
-        
-        
-        
-        redirect('dashboard');
-    }
-    public function delivered($id,$userid)
-    {
-        $this->Owner_model->deliveredOrder($id);
-       $kid= $this->Owner_model->getKitchenIdy($id);
-         $email=$this->Owner_model->getemail($userid);
-        
-        
-        $this->load->library('email');
-		$from_email = 'angdionne@aol.com'; 
-		$data['email'] = $this->Owner_model->getemailText();
-
-		$subject = 'Food';
-		$message = $data['email']->complete."<br> <a href='". base_url().'Login/rating/".$kid';
-
-		//configure email settings
-		$config['protocol'] = 'sendmail';
-		$config['smtp_host'] = 'smtp.aol.com'; //smtp host name
-		$config['smtp_port'] = '465'; //smtp port number
-		$config['smtp_user'] = 'angdionne@aol.com';
-		$config['smtp_pass'] = 'Dionne30#!!'; //$from_email password
-		$config['mailtype'] = 'html';
-		$config['charset'] = 'utf-8';
-		$config['wordwrap'] = TRUE;
-		$config['newline'] = "\r\n"; //use double quotes
-		$this->email->initialize($config);
-
-		//send mail
-		$this->email->from($from_email, 'Food');
-		$this->email->to($email);
-		$this->email->subject($subject);
-		$this->email->message($message);
-		 $this->email->send();
-        
-        redirect('dashboard');
-    }
-    public function reject($id,$userid)
-    {
-       $reason= $this->input->post('reason');
-        $this->Owner_model->rejectOrder($id,$reason);
-        
-        
-         $email=$this->Owner_model->getemail($userid);
-        	$data['email'] = $this->Owner_model->getemailText();
-        
-        $this->load->library('email');
-		$from_email = 'angdionne@aol.com'; 
-		
-
-		$subject = 'Food';
-		$message = $data['email']->reject;
-
-		//configure email settings
-		$config['protocol'] = 'sendmail';
-		$config['smtp_host'] = 'smtp.aol.com'; //smtp host name
-		$config['smtp_port'] = '465'; //smtp port number
-		$config['smtp_user'] = 'angdionne@aol.com';
-		$config['smtp_pass'] = 'Dionne30!!'; //$from_email password
-		$config['mailtype'] = 'html';
-		$config['charset'] = 'utf-8';
-		$config['wordwrap'] = TRUE;
-		$config['newline'] = "\r\n"; //use double quotes
-		$this->email->initialize($config);
-
-		//send mail
-		$this->email->from($from_email, 'Food');
-		$this->email->to($email);
-		$this->email->subject($subject);
-		$this->email->message($message);
-		 $this->email->send();
-        
-        
-        
-        
-        
-        
-        redirect('dashboard');
-    }
 public function owner() {
 $crud = new grocery_CRUD();
 
@@ -258,28 +57,9 @@ $crud = new grocery_CRUD();
     public function menu(){
     	$id = $this->session->userdata('owner_id');
     	$data['menu']=$this->Owner_model->getmenu($id);
-    	
-    	
     	$this->load->view('owner/owner_menu',$data);
     }
-public function delivereds()
-{
-     $id = $this->session->userdata('owner_id');
-        $kid = $this->Owner_model->getKitchenId($id);
 
-        $data['completeorders'] = $this->Owner_model->getCompletedOrders($kid);
-      
-$this->load->view('owner/delivered',$data);
-}
-public function undelivereds()
-{
-     $id = $this->session->userdata('owner_id');
-        $kid = $this->Owner_model->getKitchenId($id);
-
-        $data['completeorders'] = $this->Owner_model->getUnCompletedOrders($kid);
-      
-$this->load->view('owner/undelivered',$data);
-}
 
     public function food_cat(){
     	 if($this->session->userdata('owner_id') == ""){
@@ -287,147 +67,17 @@ $this->load->view('owner/undelivered',$data);
         }else{ 
         
         $id=  $this->session->userdata('owner_id');
-             $kid = $this->Owner_model->getKitchenId($id);
         $crud = new grocery_CRUD();
 //        $crud->set_theme('datatables');
-       //$crud->where('kitchen_id',$kid);
+       $crud->where('owner_id',$id);
         $crud->set_table('food_category');
-         $crud->columns('food_cat_id','food_cat_name','food_cat_image');
-             $crud->set_field_upload('food_cat_image', 'assets/uploads/files')->display_as('food_cat_image', 'Image')->display_as('food_cat_name', 'Name');
-             //$crud->field_type('quantity_unit','dropdown',
-//array('1' => 'Kilograms', '2' => 'Size','3' => 'Pieces' , '4' => 'Full / Half'));
-        $crud->field_type('kitchen_id','hidden',$kid);
+         $crud->columns('food_cat_id','food_cat_name');
+        $crud->field_type('owner_id','hidden',$this->session->userdata('owner_id'));
                 $output = $crud->render();
                 $output->table = 'Food Category';
 		$this->_display_records($output);
     }
 }
-
-
-    public function food_subcat(){
-         if($this->session->userdata('owner_id') == ""){
-        redirect ('login');
-        }else{ 
-        
-        $id=  $this->session->userdata('owner_id');
-             $kid = $this->Owner_model->getKitchenId($id);
-        $crud = new grocery_CRUD();
-//        $crud->set_theme('datatables');
-      
-        $crud->set_table('food_subcat');
-         $crud->columns('f_subcat_id','f_subcat_name','food_cat_id');
-            
-             $crud->set_relation('food_cat_id','food_category','food_cat_name');
-        
-        $crud->display_as('f_subcat_name','Subcategory Name');
-             $crud->display_as('food_cat_id', 'Food Category');
-                $output = $crud->render();
-                $output->table = 'Food Sub Category';
-        $this->_display_records($output);
-    }
-}
-
-
-/*public function menu_extras()
-{
-
-
-
-        $id=  $this->session->userdata('owner_id');
-        $kid = $this->Owner_model->getKitchenId($id);
-        $crud = new grocery_CRUD();
-//        $crud->set_theme('datatables');
-        $crud->where('kitchen_id',$kid);
-        $crud->set_table('menu_extras');
-    $data['menu'] = $this->Owner_model->getMenuk($kid);
-
-    $array2 = array();
-    foreach ($data['menu'] as $arr) {
-        $array2[$arr->menu_id] = $arr->menu_name;
-
-    }
-    $crud->field_type('menu_id', 'dropdown', $array2);
-        $crud->columns('menu_id','m_extra_name','m_extra_price');
-        $crud->display_as('menu_id', 'Menu')->display_as('m_extra_name', 'Extra Topping')->display_as('m_extra_price', 'Price');
-        $crud->field_type('kitchen_id','hidden',$kid);
-        $output = $crud->render();
-        $output->table = 'Topings';
-        $this->_display_records($output);
-
-}*/
-     
-
-
-
-     public function menu_extras()
-     {
-        $this->load->model('Admin_model');
-        $details['details'] = $this->Admin_model->getTroppingDetalis();
-        $this->load->view('owner/menu_extras',$details);
-     }
-     public function addtoping()
-     {
-        $this->load->model('Admin_model');
-        $menu['menu'] = $this->Admin_model->getMenu();
-        $this->load->view('owner/addtoping',$menu);
-     }
-     public function newToping()
-     {
-        $menu_id = $this->input->post('menu_name');
-        foreach($menu_id as $id){
-
-        $this->load->model('Admin_model');
-        $kitchen_id = $this->Admin_model->getKitchenId($id);
-        $new_topping = array(
-                                 'menu_id'       =>   $id,
-                                 'm_extra_name'  =>   $this->input->post('topping_name'),
-                                 'm_extra_price' =>   $this->input->post('menu_price'),
-                                 'kitchen_id'    =>   $kitchen_id,
-                            );
-        $this->Admin_model->insertNewTopping($new_topping);
-        
-         }
-            redirect('Dashboard/menu_extras');
-     }
-     public function updateTopping($id)
-     {
-        $this->load->model('Admin_model');
-        $data['d'] = $this->Admin_model->getData($id);
-        $this->load->view('owner/updateTopping',$data);
-     }
-     public function updateToppingSuccess()
-     {
-        $t_id     = $this->input->post('id');
-        $t_name   = $this->input->post('topping_name');
-        $t_price  = $this->input->post('topping_price');
-        $update = array(
-                              'm_extra_name'  =>  $t_name,
-                              'm_extra_price' =>  $t_price
-                       );
-
-        $this->load->model('Admin_model');
-        $this->Admin_model->updateToppingSuccess($t_id,$update);
-        redirect('Dashboard/menu_extras');
-     }
-     public function deleteTopping($id)
-     {
-        $this->load->model('Admin_model');
-        $this->Admin_model->deleteTopping($id);
-        redirect('Dashboard/menu_extras');
-     }
-
-
-
-
-
-
-
-
-     
-
-
-
-
 
      public function kitchen(){
     	$id = $this->session->userdata('owner_id');
@@ -436,9 +86,8 @@ $this->load->view('owner/undelivered',$data);
     }
     public function addmenu(){
     	$id = $this->session->userdata('owner_id');
-        $kid = $this->Owner_model->getKitchenId($id);
     	$data['kitchen']=$this->Owner_model->getOwnerKitchen($id);
-    	$data['foodcat']=$this->Owner_model->getOwnerfoodcat($kid);
+    	$data['foodcat']=$this->Owner_model->getOwnerfoodcat($id);
     	$this->load->view('owner/addmenu',$data);
     }
 
@@ -542,9 +191,7 @@ $uploads_dir = 'assets/uploads/images/';
         
         $this->Owner_model->deleteMenuImages($menu_id);
         
-//print_r($id);
-            //print_r($_FILES['input25']['name']);
-            //die();
+
             $data2 = array();
             for ($i=0 ; $i< count($_FILES['input25']['name']); $i++)
             {
@@ -572,7 +219,6 @@ $uploads_dir = 'assets/uploads/images/';
 public function newKitchen(){
 	    $uploads_dir = 'assets/uploads/images/';
         $id = $this->session->userdata('owner_id');
-        //$pic = $_FILES["file"]['name'];
         if ($_FILES["file"]['name']=="")
         {
             $pic="sample.jpg";
@@ -609,23 +255,20 @@ redirect('dashboard/kitchen');
 
 
     public function newMenu(){
-        $kitchen_id=$this->input->post('kitchen');
-        foreach ($kitchen_id as $kitchen) {
-            $data = array(
-                'menu_name' => $this->input->post('menuname'),
-                'kitchen_id' => $kitchen,
-                'food_cat_id' => $this->input->post('foodcat'),
-                'f_subcat_id' => $this->input->post('fsubcat'),
-                'menu_price' => $this->input->post('menuprice'),
-                'menu_description' => $this->input->post('menudescription')
-            );
-            $menu_id = $this->Owner_model->newMenu($data);
-        }
+    	$data=array(
+    	'menu_name'=>$this->input->post('menuname'),
+    	'kitchen_id'=>$this->input->post('kitchen'),
+    	'food_cat_id'=>$this->input->post('foodcat'),
+    	'menu_price'=>$this->input->post('menuprice'),
+    	'menu_description'=>$this->input->post('menudescription')
+    	);
 
 
+
+      $menu_id = $this->Owner_model->newMenu($data);
 
         
-/*
+
             $data2 = array();
             for ($i=0 ; $i< count($_FILES['input25']['name']); $i++)
             {
@@ -643,7 +286,7 @@ redirect('dashboard/kitchen');
 
                 $this->Owner_model->addMenuGallery($data2);
             }
-*/
+
 redirect('dashboard/menu');
     }
 
@@ -713,9 +356,7 @@ redirect('dashboard/menu');
         );
         $this->Owner_model->updateMsgStatus($data, $user_id, $id);
         $data['chats'] = $this->Owner_model->getChat($id, $user_id,$kid);
-        //$data['kitchen']=array('kitchen_id'=>$kid);
-        //print_r($data['chats']);
-        //die();
+   
         $this->load->view('owner/chatuser', $data);
     }
 
@@ -745,51 +386,6 @@ redirect('dashboard/menu');
 
     public function takenOrders(){
         
-    }
-    
-    
-    public function orderdetail(){
-        $orderid=$this->input->post('id');
-        
-        $query['orderdetail']=$this->Owner_model->getorderdetail($orderid);
-        $section=0;
-        $section='<table class="table table-stripped">
-		         <tr>
-     <th>Menus:</th> <th>Quantity:</th><th>Topping</th><th>Comment</th>
-     </tr>';
-        foreach($query['orderdetail'] as $od){
-            $section.='<tr>
-
-                                                                    <td>'. $od->menu_name.'</td>
-                                                                    
-
-                                                                    <td>'. $od->qty.'</td>'
-                                                                    ;
-                                                                        
-                                                                    $section.='<td>'; 
-                                                                    if(!empty($od->m_extra_id)){
-                                                                    $array=array();
-                                                                      $array=explode(',',$od->m_extra_id);
-                                                                       
-                                                                        foreach($array as $menu)
-                                                                        {
-                                                                     $menu =MenuEx($menu);
-                                                                            $menu= rtrim($menu, ",");
-                                                                         $section.=  $menu .",";
-                                                                        }
-                                                                       }
-                                                                        $section.='</td>';
-                                                                
-                                                                $section.='</td>
-                                                                    <td>'.  $od->comment .'</td></tr>';
-        }
-        $section.='</table>';
-        
-       // print_r($query);
-       // die();
-      //  echo json_encode($query['orderdetail']);
-    
-        echo $section;
     }
 
 }
