@@ -21,8 +21,7 @@ class Front extends CI_Controller {
 	}
 
 	public function index() {
-	echo "coming";
-	exit;
+	
 		$data['menu']=$this->Front_model->getfrontmenus();
 		$data['kitchen']=$this->Front_model->getfrontkitchens();
         $data['kit']=$this->Front_model->getkitchens();
@@ -35,10 +34,8 @@ class Front extends CI_Controller {
     
     public function ourFood() {
 		$data['foodcat']=$this->Front_model->getOurfood();
-		//$data['kitchen']=$this->Front_model->getfrontkitchens();
-        $data['kit']=$this->Front_model->getkitchens();
-       // $data['foodcat']=$this->Front_model->getfoodcat();
-	$this->load->view('frontend/ourFood.php',$data);
+	    $data['kit']=$this->Front_model->getkitchens();
+    $this->load->view('frontend/ourFood.php',$data);
     
     }
 
@@ -66,8 +63,6 @@ class Front extends CI_Controller {
 
     public function kitchenMenus($fcid,$kid){
         $user_id=$this->session->userdata('user_id');
-    	 //$data['cartcount']=$this->Front_model->checkCart($kid,$user_id);
-        // print_r($data['cartcount']);die();
         $data['kitcat']=$this->Front_model->kitFoodCat($kid,$fcid);
         $this->load->view('frontend/orders-list.php',$data);
     }
@@ -112,9 +107,7 @@ class Front extends CI_Controller {
         $data['idy']=$this->Front_model->getKitchenDetail($kid);
 
         $data['foody']=$fcid;
-         // print_r($data['cartcount']);die();
-        // print_r($data['idy']);
-        // die();
+
         $data['foody']=$fcid;
         $this->load->view('frontend/orders-list.php',$data);
 
@@ -154,9 +147,7 @@ public function sendmessage()
         $data['idy']=$this->Front_model->getKitchenDetail($kid);
         $data['foody']=$fcid;
 
-         //print_r($data['cartcount']);die();
-        //print_r($data['kitcat']);
-        //die();
+ 
         $this->load->view('frontend/orders-list.php',$data);
 
     }
@@ -172,9 +163,6 @@ public function sendmessage()
         $data['idy']=$this->Front_model->getKitchenDetail($kid);
         $data['foody']=$fcid;
         $data['sss']="halo";
-        //print_r($data['cartcount']);die();
-        //print_r($data['kitcat']);
-        //die();
         $this->load->view('frontend/orders-list.php',$data);
 
     }
