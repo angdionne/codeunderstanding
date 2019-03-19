@@ -16,7 +16,6 @@ class Owner_model extends CI_Model {
 		->from('menu')
 		->join('kitchen','kitchen.kitchen_id=menu.kitchen_id')
 		->join('owner','owner.owner_id=kitchen.owner_id')
-	//	->join('menu_gallery','menu_gallery.menu_id=menu.menu_id')
 		->join('food_category','food_category.food_cat_id=menu.food_cat_id')
 		->group_by('menu.menu_id')
 		->where('owner.owner_id',$id)
