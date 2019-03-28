@@ -13,7 +13,8 @@ class Dashboard extends CI_Controller {
 		$this->load->helper('url');
 		$this->load->model('Login_model');
 		$this->load->model('Owner_model');
-		$this->load->library('grocery_CRUD');
+        $this->load->library('grocery_CRUD');
+
 		$rits = $this->session->userdata('owner_email');
 		if ($rits == NULL) {
 			redirect('Login');
@@ -37,22 +38,19 @@ class Dashboard extends CI_Controller {
         $data['delivered'] = $this->Owner_model->getDeliveredOrdersCount($kid);
         $data['undelivered'] = $this->Owner_model->getUndeliveredOrdersCount($kid);
 $this->load->view('owner/dashboard',$data);
-	}
+    }
+    
 
-    //It will accept order by email and ID
-	public function accept($id,$userid)
-    {
-         $this->Owner_model->acceptOrder($id);
-             $email=$this->Owner_model->getemail($userid);
-        
-        
+    public function sendEmailFunction($messageContent){
+
         $this->load->library('email');
-		$from_email = 'angdionne@aol.com'; 
-		 $data['email'] = $this->Owner_model->getemailText();
+
+        $from_email = 'angdionne@aol.com'; 
+		$data['email'] = $this->Owner_model->getemailText();
 
 		$subject = 'Food';
-		$message = $data['email']->accept;
-
+		$message = $messageContent;
+   
 		$config['protocol'] = 'sendmail';
 		$config['smtp_host'] = 'smtp.aol.com'; //smtp host name
 		$config['smtp_port'] = '465'; //smtp port number
@@ -69,39 +67,26 @@ $this->load->view('owner/dashboard',$data);
 		$this->email->to($email);
 		$this->email->subject($subject);
 		$this->email->message($message);
-	  $this->email->send();
+	     $this->email->send();
+
+    }
+
+    //It will accept order by email and ID
+	public function accept($id,$userid)
+    {
+         $this->Owner_model->acceptOrder($id);
+         $email=$this->Owner_model->getemail($userid);
+        $emailMessage =  $data['email']->accept;
+         $this->sendEmailFunction($emailMessage);
          redirect('dashboard');
     }
+
     public function baked($id,$userid){
          $this->Owner_model->bakedOrder($id);
-           $email=$this->Owner_model->getemail($userid);
+        $email=$this->Owner_model->getemail($userid);
         
-        
-        $this->load->library('email');
-		$from_email = 'angdionne@aol.com';
-		
- $data['email'] = $this->Owner_model->getemailText();
-		$subject = 'Food';
-		$message = $data['email']->bake;
-
-		//configure email settings
-		$config['protocol'] = 'sendmail';
-		$config['smtp_host'] = 'smtp.aol.com'; //smtp host name
-		$config['smtp_port'] = '465'; //smtp port number
-		$config['smtp_user'] = 'angdionne@aol.com.com';
-		$config['smtp_pass'] = 'Dionne30#!!'; //$from_email password
-		$config['mailtype'] = 'html';
-		$config['charset'] = 'utf-8';
-		$config['wordwrap'] = TRUE;
-		$config['newline'] = "\r\n"; //use double quotes
-		$this->email->initialize($config);
-
-		//send mail
-		$this->email->from($from_email, 'Food');
-		$this->email->to($email);
-		$this->email->subject($subject);
-		$this->email->message($message);
-		 $this->email->send();
+        $emailMessage = $data['email']->bake;
+        $this->sendEmailFunction($emailMessage);
         
         
         
@@ -113,33 +98,9 @@ $this->load->view('owner/dashboard',$data);
     {
         $this->Owner_model->takeawayOrder($id);
         $email=$this->Owner_model->getemail($userid);
-        
-        
-        $this->load->library('email');
-		$from_email = 'angdionne@aol.com'; 
-		
-$data['email'] = $this->Owner_model->getemailText();
-		$subject = 'Food';
-		$message = $data['email']->take;
 
-		//configure email settings
-		$config['protocol'] = 'sendmail';
-		$config['smtp_host'] = 'smtp.aol.com'; //smtp host name
-		$config['smtp_port'] = '465'; //smtp port number
-		$config['smtp_user'] = 'angdionne@aol.com';
-		$config['smtp_pass'] = 'Dionne30!!'; //$from_email password
-		$config['mailtype'] = 'html';
-		$config['charset'] = 'utf-8';
-		$config['wordwrap'] = TRUE;
-		$config['newline'] = "\r\n"; //use double quotes
-		$this->email->initialize($config);
-
-		//send mail
-		$this->email->from($from_email, 'Food');
-		$this->email->to($email);
-		$this->email->subject($subject);
-		$this->email->message($message);
-		 $this->email->send();
+        $emailMessage = $data['email']->take;
+        $this->sendEmailFunction($emailMessage);
         
         
         
@@ -151,32 +112,10 @@ $data['email'] = $this->Owner_model->getemailText();
        $kid= $this->Owner_model->getKitchenIdy($id);
          $email=$this->Owner_model->getemail($userid);
         
+         $emailMessage = $data['email']->complete."<br> <a href='". base_url().'Login/rating/".$kid';
         
-        $this->load->library('email');
-		$from_email = 'angdionne@aol.com'; 
-		$data['email'] = $this->Owner_model->getemailText();
-
-		$subject = 'Food';
-		$message = $data['email']->complete."<br> <a href='". base_url().'Login/rating/".$kid';
-
-		//configure email settings
-		$config['protocol'] = 'sendmail';
-		$config['smtp_host'] = 'smtp.aol.com'; //smtp host name
-		$config['smtp_port'] = '465'; //smtp port number
-		$config['smtp_user'] = 'angdionne@aol.com';
-		$config['smtp_pass'] = 'Dionne30#!!'; //$from_email password
-		$config['mailtype'] = 'html';
-		$config['charset'] = 'utf-8';
-		$config['wordwrap'] = TRUE;
-		$config['newline'] = "\r\n"; //use double quotes
-		$this->email->initialize($config);
-
-		//send mail
-		$this->email->from($from_email, 'Food');
-		$this->email->to($email);
-		$this->email->subject($subject);
-		$this->email->message($message);
-		 $this->email->send();
+         $this->sendEmailFunction($emailMessage);
+        
         
         redirect('dashboard');
     }
@@ -187,33 +126,11 @@ $data['email'] = $this->Owner_model->getemailText();
         
         
          $email=$this->Owner_model->getemail($userid);
-        	$data['email'] = $this->Owner_model->getemailText();
+            $data['email'] = $this->Owner_model->getemailText();
+            
+            $emailMessage = $data['email']->reject;
         
-        $this->load->library('email');
-		$from_email = 'angdionne@aol.com'; 
-		
-
-		$subject = 'Food';
-		$message = $data['email']->reject;
-
-		//configure email settings
-		$config['protocol'] = 'sendmail';
-		$config['smtp_host'] = 'smtp.aol.com'; //smtp host name
-		$config['smtp_port'] = '465'; //smtp port number
-		$config['smtp_user'] = 'angdionne@aol.com';
-		$config['smtp_pass'] = 'Dionne30!!'; //$from_email password
-		$config['mailtype'] = 'html';
-		$config['charset'] = 'utf-8';
-		$config['wordwrap'] = TRUE;
-		$config['newline'] = "\r\n"; //use double quotes
-		$this->email->initialize($config);
-
-		//send mail
-		$this->email->from($from_email, 'Food');
-		$this->email->to($email);
-		$this->email->subject($subject);
-		$this->email->message($message);
-		 $this->email->send();
+            $this->sendEmailFunction($emailMessage);
         
         
         
@@ -382,18 +299,6 @@ $this->load->view('owner/undelivered',$data);
         $this->Admin_model->deleteTopping($id);
         redirect('Dashboard/menu_extras');
      }
-
-
-
-
-
-
-
-
-     
-
-
-
 
 
      public function kitchen(){
@@ -703,28 +608,26 @@ redirect('dashboard/menu');
         foreach($query['orderdetail'] as $od){
             $section.='<tr>
 
-                                                                    <td>'. $od->menu_name.'</td>
+     <td>'. $od->menu_name.'</td>
                                                                     
-
-                                                                    <td>'. $od->qty.'</td>'
-                                                                    ;
+     <td>'. $od->qty.'</td>';
                                                                         
-                                                                    $section.='<td>'; 
-                                                                    if(!empty($od->m_extra_id)){
-                                                                    $array=array();
-                                                                      $array=explode(',',$od->m_extra_id);
-                                                                       
-                                                                        foreach($array as $menu)
-                                                                        {
-                                                                     $menu =MenuEx($menu);
-                                                                            $menu= rtrim($menu, ",");
-                                                                         $section.=  $menu .",";
-                                                                        }
-                                                                       }
-                                                                        $section.='</td>';
+        $section.='<td>'; 
+            if(!empty($od->m_extra_id)){
+        $array=array();
+        $array=explode(',',$od->m_extra_id);                                                               
+           foreach($array as $menu)
+          {
+            $menu =MenuEx($menu);
+            $menu= rtrim($menu, ",");
+            $section.=  $menu .",";
+         }
+  }
+      $section.='</td>';
                                                                 
-                                                                $section.='</td>
-                                                                    <td>'.  $od->comment .'</td></tr>';
+      $section.='</td>
+      <td>'.  $od->comment .'</td></tr>';
+      
         }
         $section.='</table>';
         
